@@ -1,9 +1,11 @@
 package br.com.fiap.jpa.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,13 +25,18 @@ public class Carro implements Serializable{
 
 	private static final long serialVersionUID = -7598498019702666377L;
 	
-	public Carro() {}
+	public Carro() {
+        this.ativo = true;
+        this.dataCadastro = LocalDateTime.now();
+        this.dataAtualizacao = LocalDateTime.now();
+    }
 	
-	public Carro(String placa, String cor, String chassi) {
+	public Carro(String placa, String cor, String chassi, Modelo modelo) {
 		this();
 		this.placa = placa;
 		this.cor = cor;
 		this.chassi = chassi;
+		this.modelo = modelo;
 	}
 	
 	@Id
@@ -45,6 +52,15 @@ public class Carro implements Serializable{
 	@Column(name = "nm_chassi", length = 80, nullable = false)
 	private String chassi;
 	
+	@Column(name = "st_ativo")
+    private Boolean ativo;
+
+    @Column(name = "dt_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @Column(name = "dt_atualizacao")
+    private LocalDateTime dataAtualizacao;
+	
 	@ManyToMany
 	@JoinTable(
 			name="tb_carro_acessorio",
@@ -52,8 +68,9 @@ public class Carro implements Serializable{
 			inverseJoinColumns = @JoinColumn(name="carro_id"))
 	private List<Acessorio> acessoriosCarros;
 	
-	@ManyToOne
-	private List<Acessorio> modeloCarro;
+	@ManyToOne(cascade = CascadeType.MERGE)
+	@JoinColumn(name = "modelo_id")
+	private Modelo modelo;
 	
 
 	public String getPlaca() {
@@ -88,21 +105,42 @@ public class Carro implements Serializable{
 		this.acessoriosCarros = acessoriosCarros;
 	}
 	
-	public List<Acessorio> getModeloCarro() {
-		return modeloCarro;
+	public Boolean getAtivo() {
+		return ativo;
 	}
 
-	public void setModeloCarro(List<Acessorio> modeloCarro) {
-		this.modeloCarro = modeloCarro;
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public LocalDateTime getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(LocalDateTime dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public LocalDateTime getDataAtualizacao() {
+		return dataAtualizacao;
+	}
+
+	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+		this.dataAtualizacao = dataAtualizacao;
+	}
+
+	public Modelo getModelo() {
+		return modelo;
+	}
+
+	public void setModelo(Modelo modelo) {
+		this.modelo = modelo;
 	}
 
 	@Override
 	public String toString() {
-		return "\nPlaca: " + this.getPlaca()
-				+ "\nCor: " + this.getCor()
-				+ "\nChassi: " + this.getChassi()
-				+ "\nAcessórios: " + this.getAcessoriosCarros()
-				+ "\nModelo: " + this.getModeloCarro();
+		return "Modelo: " + this.modelo + "\nPlaca: " + this.placa + "\nCor: " + this.cor
+                + "\nChassi: " + this.chassi;
 	}
 
 }

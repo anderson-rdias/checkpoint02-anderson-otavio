@@ -1,8 +1,11 @@
 package br.com.fiap.jpa.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,7 +22,10 @@ import javax.persistence.Table;
 public class Modelo implements Serializable{
 	
 	public Modelo() {
-	}
+        this.ativo = true;
+        this.dataCadastro = LocalDateTime.now();
+        this.dataAtualizacao = LocalDateTime.now();
+    }
 	
 	public Modelo(String descricao) {
 		this();
@@ -35,8 +41,17 @@ public class Modelo implements Serializable{
 	@Column(name = "ds_modelo", length = 80, nullable = false)
 	private String descricao;
 	
-	@OneToMany(mappedBy = "carro", fetch = FetchType.EAGER)
-	private List<Carro> carros;
+	@Column(name = "st_ativo")
+    private Boolean ativo;
+
+    @Column(name = "dt_cadastro")
+    private LocalDateTime dataCadastro;
+
+    @Column(name = "dt_atualizacao")
+    private LocalDateTime dataAtualizacao;
+	
+    @OneToMany(mappedBy = "modelo", fetch = FetchType.EAGER)
+    private Set<Carro> carros;
 
 	public String getDescricao() {
 		return descricao;
@@ -45,12 +60,36 @@ public class Modelo implements Serializable{
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
 	}
-	
-	public List<Carro> getCarros() {
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
+	public LocalDateTime getDataCadastro() {
+		return dataCadastro;
+	}
+
+	public void setDataCadastro(LocalDateTime dataCadastro) {
+		this.dataCadastro = dataCadastro;
+	}
+
+	public LocalDateTime getDataAtualizacao() {
+		return dataAtualizacao;
+	}
+
+	public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+		this.dataAtualizacao = dataAtualizacao;
+	}
+
+	public Set<Carro> getCarros() {
 		return carros;
 	}
 
-	public void setCarros(List<Carro> carros) {
+	public void setCarros(Set<Carro> carros) {
 		this.carros = carros;
 	}
 
@@ -60,8 +99,7 @@ public class Modelo implements Serializable{
 
 	@Override
 	public String toString() {
-		return "\nDescrição: " + this.getDescricao()
-				+ "\nCarro: " + this.getCarros();
+		return descricao;
 	}
 
 }
